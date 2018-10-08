@@ -38,6 +38,7 @@
 ;; Highlight lines in cursor
 (add-hook 'prog-mode-hook 'hl-line-mode)
 (add-hook 'text-mode-hook 'hl-line-mode)
+(add-hook 'prog-mode-hook 'ggtags-mode)
 
 ;; Enable "electric" pairs
 (electric-pair-mode 1)
