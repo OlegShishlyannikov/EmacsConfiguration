@@ -3,6 +3,11 @@
 ;;; Code:
 ;; Set emacs window title
 
+;; Init packages
+(require 'package)
+(package-initialize)
+(add-to-list 'package-archives '("melpa" . "https://melpa.milkbox.net/packages/"))
+
 (setq frame-title-format "Emacs!")
 
 ;; Disable autosave
@@ -79,28 +84,16 @@
 
 (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
 
-;; Init packages
-(require 'package)
-(package-initialize)
-(add-to-list 'package-archives '("melpa" . "https://melpa.milkbox.net/packages/"))
-
 ;; List of required packages
-(require 'company) ;; Company autocomplete framework
-(require 'company-irony) ;; Company plugin for C/C++ autocomplete
+;; (require 'company) ;; Company autocomplete framework
+;; (require 'company-irony) ;; Company plugin for C/C++ autocomplete
 (require 'company-irony-c-headers) ;; Company plugin for C/C++ headers autocomplete
 (require 'company-jedi) ;; Company plugin for Python autocomplete
 (require 'company-cmake) ;; Company plugin for Cmake autocomplete
-(require 'company-qml) ;; Company plugin for QML autocomplete
-(require 'company-lua) ;; Company plugin for LUA autocomplete
-(require 'company-tern) ;; Company plugin for Javascript autocomplete
-(require 'tern) ;; Javascript autocomplete framework
 (require 'projectile) ;; Emacs project manager
 (require 'irony) ;; C/C++ autocomplete backend
 (require 'flycheck) ;; C/C++ syntax checking on fly
 (require 'cmake-mode) ;; Cmake syntax highlight mode
-(require 'qml-mode) ;; QML syntax highlight mode
-(require 'powerline) ;; Powerline for emacs
-(require 'ocodo-svg-modelines) ;; Vector graphics modelines
 (require 'verilog-mode) ;; Verilog
 (require 'xelb) ;; Elisp X interface
 (require 'exwm) ;; Emacs X Window Manager
@@ -110,8 +103,6 @@
 (require 'exwm-systemtray) ;; Emacs X Window Manager systemtray
 (require 'exwmx-core) ;; EXWM
 (require 'ggtags) ;; Tags for code navigation
-(require 'android-mode) ;; Android mode for emacs
-(custom-set-variables '(android-mode-avd "AVD") '(android-mode-sdk-dir "~/Programs/Android/SDK/")) ;; Setup android mode
 
 ;; Pdf files opens in pdf-view mode
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
@@ -129,9 +120,8 @@
 (add-hook 'prog-mode-hook 'projectile-mode)
 
 ;; Add backends to company mode after load
-(eval-after-load 'company '(add-to-list 'company-backends '(company-irony-c-headers company-irony company-qml company-tern company-jedi company-yasnippet)))
+(eval-after-load 'company '(add-to-list 'company-backends '(company-irony-c-headers company-irony company-jedi)))
 (add-hook 'verilog-mode-hook (lambda () (add-to-list 'company-keywords-alist (cons 'verilog-mode verilog-keywords))))
-(add-hook 'scad-mode-hook (lambda () (add-to-list 'company-keywords-alist (cons 'scad-mode scad-keywords))))
 
 (setq verilog-indent-level-module 2)
 (setq verilog-indent-level-declaration 2)
@@ -159,11 +149,6 @@
 (add-hook 'c++-mode-hook 'ggtags-mode)
 (add-hook 'c++-mode-hook 'ggtags-mode)
 
-;; LaTeX settings
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq TeX-save-query nil)
-
 ;; Regular expressions
 (require 'visual-regexp)
 (define-key global-map (kbd "C-c r") 'vr/replace)
@@ -186,23 +171,6 @@
 
 ;; Add this function to irony load
 (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-
-;; Custom function for qml mode
-(defun my-qml-mode-hook ()
-  (define-key qml-mode-map [remap completion-at-point] 'company-qml)
-  (define-key qml-mode-map [remap complete-symbol] 'company-qml))
-
-;; Add this function to qml mode
-(add-hook 'qml-mode-hook 'my-qml-mode-hook)
-
-;; Set paths to qml headers
-(setq qmltypes-parser-file-list
-      '("/usr/lib/x86_64-linux-gnu/qt5/qml/builtins.qmltypes"
-        "/usr/lib/x86_64-linux-gnu/qt5/qml/QtQuick.2/plugins.qmltypes"
-        "/usr/lib/x86_64-linux-gnu/qt5/qml/QtQuick/Controls.2/plugins.qmltypes"))
-
-;; Set company backend in lua mode
-(add-hook 'lua-mode-hook (lambda() (setq-local company-backends '(company-lua))))
 
 ;; Set delay to show autocomplete popup
 (setq company-idle-delay 0)
@@ -425,11 +393,11 @@ middle"
 
 ;; (counsel-projectile-on)
 (require 'exwm-randr)
-(setq exwm-randr-workspace-output-plist '( 0 "HDMI-0" 1 "HDMI-0"))
+(setq exwm-randr-workspace-output-plist '( 0 "DP-2" 1 "DP-2" 2 "DP-1" 3 "DP-1" ))
 (add-hook 'exwm-randr-screen-change-hook
         (lambda ()
           (start-process-shell-command
-          "xrandr" nil "xrandr --output HDMI-0 --left-of eDP --auto")))
+          "xrandr" nil "xrandr --output DP-2 --left-of DP-1 --auto")))
 (exwm-randr-enable)
 
 ;; Setup org mode
@@ -438,8 +406,6 @@ middle"
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
-
-(start-process-shell-command "dropbox" nil "dropbox start")
 
 (require 'google-translate)
 (require 'google-translate-smooth-ui)
