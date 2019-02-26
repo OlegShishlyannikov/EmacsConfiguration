@@ -271,7 +271,6 @@
 (exwm-input-set-key (kbd "<XF86MonBrightnessUp>") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "xbacklight -inc 10"))))
 (exwm-input-set-key (kbd "<XF86MonBrightnessDown>") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "xbacklight -dec 10"))))
 
-
 ;; EXWM global keyboard bindings
 (exwm-input-set-key (kbd "s-SPC") 'exwm-input-toggle-keyboard) ;; Toggle keyboard grabbing in current workspace
 (exwm-input-set-key (kbd "M-s-SPC") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "setxkbmap -layout ru && echo Current Layout : RU")))) ;; Globally set russian keyboard layout
@@ -410,6 +409,21 @@ middle"
 (require 'google-translate)
 (require 'google-translate-smooth-ui)
 (global-set-key (kbd "C-c t") 'google-translate-smooth-translate)
+
+;; Instead screensaver
+(defun lock-screen ()
+  "Lock screen using (zone) and xtrlock
+ calls M-x zone on all frames and runs xtrlock"
+  (interactive)
+  (save-excursion										;(shell-command "xtrlock &")
+    (set-process-sentinel
+     (start-process "xtrlock" nil "xtrlock")
+     '(lambda (process event)
+        (zone-leave-me-alone)))
+    (zone-when-idle 1)))
+
+;; Screenlock key binding
+(exwm-input-set-key (kbd "s-<f12>") (lock-screen))
 
 ;; Make this file visible to emacs lisp interpreter
 (provide 'init)
