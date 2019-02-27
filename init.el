@@ -263,18 +263,25 @@
 (global-set-key (kbd "C-c k") 'counsel-ag)
 
 ;; Sound regulation
-(exwm-input-set-key (kbd "<XF86AudioRaiseVolume>") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "amixer -q sset Master 5%+ && amixer sget Master"))))
-(exwm-input-set-key (kbd "<XF86AudioLowerVolume>") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "amixer -q sset Master 5%- && amixer sget Master"))))
+(exwm-input-set-key (kbd "<XF86AudioRaiseVolume>") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "amixer -q sset Master 5%+"))))
+(exwm-input-set-key (kbd "<XF86AudioLowerVolume>") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "amixer -q sset Master 5%-"))))
 (exwm-input-set-key (kbd "<XF86AudioMute>") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "amixer -q sset Master toggle && amixer sget Master"))))
-
-;; Backlight regulation
-(exwm-input-set-key (kbd "<XF86MonBrightnessUp>") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "xbacklight -inc 10"))))
-(exwm-input-set-key (kbd "<XF86MonBrightnessDown>") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "xbacklight -dec 10"))))
 
 ;; EXWM global keyboard bindings
 (exwm-input-set-key (kbd "s-SPC") 'exwm-input-toggle-keyboard) ;; Toggle keyboard grabbing in current workspace
-(exwm-input-set-key (kbd "M-s-SPC") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "setxkbmap -layout ru && echo Current Layout : RU")))) ;; Globally set russian keyboard layout
-(exwm-input-set-key (kbd "C-s-SPC") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "setxkbmap -layout us && echo Current Layout : US")))) ;; Globally set usa keyboard layout
+(exwm-input-set-key (kbd "M-s-SPC") '(lambda()
+									   (interactive)
+									   (minibuffer-message
+										(shell-command-to-string "setxkbmap -layout ru")
+										(message "%s" "RU")
+										))) ;; Globally set russian keyboard layout
+
+(exwm-input-set-key (kbd "C-s-SPC") '(lambda()
+									   (interactive)
+									   (minibuffer-message
+										(shell-command-to-string "setxkbmap -layout us")
+										(message "%s" "US")
+										))) ;; Globally set usa keyboard layout
 
 ;; Quick launcher applications
 (exwm-input-set-key (kbd "s-<return>") '(lambda () (interactive) (exwmx-shell-command "terminator"))) ;; Open terminal
@@ -285,6 +292,7 @@
 (exwm-input-set-key (kbd "s-a s-m") '(lambda () (interactive) (exwmx-shell-command "terminator -x alsamixer"))) ;; Open alsa mixer
 (exwm-input-set-key (kbd "s-g s-c") '(lambda () (interactive) (exwmx-shell-command "google-chrome"))) ;; Open web-browser
 (exwm-input-set-key (kbd "s-v s-b") '(lambda () (interactive) (exwmx-shell-command "virtualbox"))) ;; Open virtualbox
+(exwm-input-set-key (kbd "s-s s-k") '(lambda () (interactive) (exwmx-shell-command "skypeforlinux"))) ;; Open skype
 
 (exwm-input-set-key (kbd "s-s 0") '(lambda () (interactive) (exwm-workspace-switch 0)))
 (exwm-input-set-key (kbd "s-s 1") '(lambda () (interactive) (exwm-workspace-switch 1)))
@@ -413,17 +421,17 @@ middle"
 ;; Instead screensaver
 (defun lock-screen ()
   "Lock screen using (zone) and xtrlock
- calls M-x zone on all frames and runs xtrlock"
+calls M-x zone on all frames and runs xtrlock"
   (interactive)
   (save-excursion										;(shell-command "xtrlock &")
-    (set-process-sentinel
+	(set-process-sentinel
      (start-process "xtrlock" nil "xtrlock")
      '(lambda (process event)
-        (zone-leave-me-alone)))
-    (zone-when-idle 1)))
-
+		(zone-leave-me-alone)))
+	(zone-when-idle 1)))
+	
 ;; Screenlock key binding
-(exwm-input-set-key (kbd "s-<f12>") (lock-screen))
+(exwm-input-set-key (kbd "<f12>") 'lock-screen)
 
 ;; Make this file visible to emacs lisp interpreter
 (provide 'init)
