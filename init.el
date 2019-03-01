@@ -85,8 +85,8 @@
 (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
 
 ;; List of required packages
-;; (require 'company) ;; Company autocomplete framework
-;; (require 'company-irony) ;; Company plugin for C/C++ autocomplete
+(require 'company) ;; Company autocomplete framework
+(require 'company-irony) ;; Company plugin for C/C++ autocomplete
 (require 'company-irony-c-headers) ;; Company plugin for C/C++ headers autocomplete
 (require 'company-jedi) ;; Company plugin for Python autocomplete
 (require 'company-cmake) ;; Company plugin for Cmake autocomplete
@@ -153,6 +153,7 @@
 (require 'visual-regexp)
 (define-key global-map (kbd "C-c r") 'vr/replace)
 (define-key global-map (kbd "C-c q") 'vr/query-replace)
+
 ;; if you use multiple-cursors, this is for you:
 (define-key global-map (kbd "C-c m") 'vr/mc-mark)
 
@@ -293,6 +294,7 @@
 (exwm-input-set-key (kbd "s-g s-c") '(lambda () (interactive) (exwmx-shell-command "google-chrome"))) ;; Open web-browser
 (exwm-input-set-key (kbd "s-v s-b") '(lambda () (interactive) (exwmx-shell-command "virtualbox"))) ;; Open virtualbox
 (exwm-input-set-key (kbd "s-s s-k") '(lambda () (interactive) (exwmx-shell-command "skypeforlinux"))) ;; Open skype
+(exwm-input-set-key (kbd "s-t s-g") '(lambda () (interactive) (exwmx-shell-command "~/Programs/Telegram/Telegram"))) ;; Open telegram
 
 (exwm-input-set-key (kbd "s-s 0") '(lambda () (interactive) (exwm-workspace-switch 0)))
 (exwm-input-set-key (kbd "s-s 1") '(lambda () (interactive) (exwm-workspace-switch 1)))
@@ -378,7 +380,7 @@ middle"
 (display-time-mode t)
 
 ;; Show battery charge
-(display-battery-mode 1)
+;; (display-battery-mode 1)
 
 ;; Show column numbers
 (column-number-mode 1)
@@ -389,16 +391,14 @@ middle"
 
 ;; Set default config of emacs x window manager
 (setq exwm-workspace-number 8)
-(exwm-enable)
-(setq exwmx-button-floating-button-line 'mode-line)
-
 (exwm-config-default)
+(exwm-enable)
+(exwm-cm-enable)
 (exwm-systemtray-enable)
-;; (add-hook 'after-init-hook 'exwm-mode)
+(setq exwmx-button-floating-button-line 'mode-line)
 
 '(font-use-system-font t)
 
-;; (counsel-projectile-on)
 (require 'exwm-randr)
 (setq exwm-randr-workspace-output-plist '( 0 "DP-2" 1 "DP-2" 2 "DP-1" 3 "DP-1" ))
 (add-hook 'exwm-randr-screen-change-hook
@@ -413,7 +413,8 @@ middle"
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
-
+ 
+;; Google translate tuning
 (require 'google-translate)
 (require 'google-translate-smooth-ui)
 (global-set-key (kbd "C-c t") 'google-translate-smooth-translate)
@@ -423,13 +424,14 @@ middle"
   "Lock screen using (zone) and xtrlock
 calls M-x zone on all frames and runs xtrlock"
   (interactive)
-  (save-excursion										;(shell-command "xtrlock &")
+  (save-excursion
 	(set-process-sentinel
      (start-process "xtrlock" nil "xtrlock")
      '(lambda (process event)
-		(zone)))
-	(zone-when-idle 300)))
-		
+		(zone-leave-me-alone)))
+	(zone-when-idle 1)
+	(linum-mode)))
+
 ;; Screenlock key binding
 (exwm-input-set-key (kbd "<f12>") 'lock-screen)
 
