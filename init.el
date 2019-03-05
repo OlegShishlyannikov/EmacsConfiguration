@@ -428,12 +428,10 @@ calls M-x zone on all frames and runs xtrlock"
 	(set-process-sentinel
      (start-process "xtrlock" nil "xtrlock")
      '(lambda (process event)
-		(zone-leave-me-alone)
-		))
+		(zone-leave-me-alone)))
 
 	(shell-command-to-string "setxkbmap -layout us")
-	(zone-when-idle 1)
-	(linum-mode)))
+	(zone-sl)))
 
 ;; Screenlock key binding
 (exwm-input-set-key (kbd "<f12>") 'lock-screen)
