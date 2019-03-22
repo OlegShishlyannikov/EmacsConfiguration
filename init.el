@@ -149,6 +149,9 @@
 (add-hook 'c++-mode-hook 'ggtags-mode)
 (add-hook 'c++-mode-hook 'ggtags-mode)
 
+;; Enable flycheck in BASH
+(add-hook 'sh-mode-hook 'flycheck-mode)
+
 ;; Regular expressions
 (require 'visual-regexp)
 (define-key global-map (kbd "C-c r") 'vr/replace)
@@ -431,10 +434,28 @@ calls M-x zone on all frames and runs xtrlock"
 		(zone-leave-me-alone)))
 
 	(shell-command-to-string "setxkbmap -layout us")
-	(zone-sl)))
+	(zone-when-idle 1)))
 
 ;; Screenlock key binding
 (exwm-input-set-key (kbd "<f12>") 'lock-screen)
+
+;; location of my maildir
+(setq mu4e-maildir (expand-file-name "~/Maildir"))
+
+;; command used to get mail
+;; use this for testing
+;; (setq mu4e-get-mail-command "true")
+;; use this to sync with mbsync
+(setq mu4e-get-mail-command "mbsync gmail")
+
+;; rename files when moving
+;; NEEDED FOR MBSYNC
+(setq mu4e-change-filenames-when-moving t)
+
+;;set up queue for offline email
+;;use mu mkdir  ~/Maildir/queue to set up first
+(setq smtpmail-queue-mail nil  ;; start in normal mode
+      smtpmail-queue-dir   "~/Maildir/queue/cur")
 
 ;; Make this file visible to emacs lisp interpreter
 (provide 'init)
