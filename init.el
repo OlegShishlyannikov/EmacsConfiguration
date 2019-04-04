@@ -273,19 +273,19 @@
 
 ;; EXWM global keyboard bindings
 (exwm-input-set-key (kbd "s-SPC") 'exwm-input-toggle-keyboard) ;; Toggle keyboard grabbing in current workspace
-(exwm-input-set-key (kbd "M-s-SPC") '(lambda()
-									   (interactive)
-									   (minibuffer-message
-										(shell-command-to-string "setxkbmap -layout ru")
-										(message "%s" "RU")
-										))) ;; Globally set russian keyboard layout
+;; (exwm-input-set-key (kbd "M-s-SPC") '(lambda()
+;; 									   (interactive)
+;; 									   (minibuffer-message
+;; 										(shell-command-to-string "setxkbmap -layout ru")
+;; 										(message "%s" "RU")
+;; 										))) ;; Globally set russian keyboard layout
 
-(exwm-input-set-key (kbd "C-s-SPC") '(lambda()
-									   (interactive)
-									   (minibuffer-message
-										(shell-command-to-string "setxkbmap -layout us")
-										(message "%s" "US")
-										))) ;; Globally set usa keyboard layout
+;; (exwm-input-set-key (kbd "C-s-SPC") '(lambda()
+;; 									   (interactive)
+;; 									   (minibuffer-message
+;; 										(shell-command-to-string "setxkbmap -layout us")
+;; 										(message "%s" "US")
+;; 										))) ;; Globally set usa keyboard layout
 
 ;; Quick launcher applications
 (exwm-input-set-key (kbd "s-<return>") '(lambda () (interactive) (exwmx-shell-command "terminator"))) ;; Open terminal
