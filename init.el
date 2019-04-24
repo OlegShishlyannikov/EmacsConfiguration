@@ -121,7 +121,8 @@
 
 ;; Add backends to company mode after load
 (eval-after-load 'company '(add-to-list 'company-backends '(company-irony-c-headers company-irony company-jedi)))
-(add-hook 'verilog-mode-hook (lambda () (add-to-list 'company-keywords-alist (cons 'verilog-mode verilog-keywords))))
+(add-hook 'verilog-mode-hook (add-to-list 'company-keywords-alist (cons 'verilog-mode verilog-keywords)))
+(add-hook 'verilog-mode-hook 'flycheck-mode)
 
 (setq verilog-indent-level-module 2)
 (setq verilog-indent-level-declaration 2)
@@ -137,10 +138,10 @@
 (setq verilog-auto-lineup 'declarations)
 (setq verilog-highlight-p1800-keywords nil)
 (setq verilog-tool 'verilog-linter)
-(setq verilog-linter "iverilog")
-(setq verilog-coverage "")
-(setq verilog-simulator "")
-(setq verilog-compiler "")
+(setq verilog-linter "verilator")
+(setq verilog-coverage "verilator_coverage")
+(setq verilog-simulator "iverilog")
+(setq verilog-compiler "iverilog" )
 (setq verilog-indent-level 2)
 
 ;; Enable syntax flycheck in C/C++ mode
@@ -439,23 +440,7 @@ calls M-x zone on all frames and runs xtrlock"
 ;; Screenlock key binding
 (exwm-input-set-key (kbd "<f12>") 'lock-screen)
 
-;; location of my maildir
-(setq mu4e-maildir (expand-file-name "~/Maildir"))
-
-;; command used to get mail
-;; use this for testing
-;; (setq mu4e-get-mail-command "true")
-;; use this to sync with mbsync
-(setq mu4e-get-mail-command "mbsync gmail")
-
-;; rename files when moving
-;; NEEDED FOR MBSYNC
-(setq mu4e-change-filenames-when-moving t)
-
-;;set up queue for offline email
-;;use mu mkdir  ~/Maildir/queue to set up first
-(setq smtpmail-queue-mail nil  ;; start in normal mode
-      smtpmail-queue-dir   "~/Maildir/queue/cur")
+(setq org-agenda-files (list "~/Workspace/SUPPLNX.org"))
 
 ;; Make this file visible to emacs lisp interpreter
 (provide 'init)
