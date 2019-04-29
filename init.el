@@ -121,7 +121,7 @@
 
 ;; Add backends to company mode after load
 (eval-after-load 'company '(add-to-list 'company-backends '(company-irony-c-headers company-irony company-jedi)))
-(add-hook 'verilog-mode-hook (add-to-list 'company-keywords-alist (cons 'verilog-mode verilog-keywords)))
+;; (add-hook 'verilog-mode-hook (add-to-list 'company-keywords-alist (cons 'verilog-mode verilog-keywords)))
 (add-hook 'verilog-mode-hook 'flycheck-mode)
 
 (setq verilog-indent-level-module 2)
@@ -171,6 +171,7 @@
 
 ;; Custom function hook for irony after load
 (defun my-irony-mode-hook ()
+	
   (define-key irony-mode-map [remap completion-at-point] 'irony-completion-at-point-async)
   (define-key irony-mode-map [remap complete-symbol] 'irony-completion-at-point-async))
 
@@ -355,6 +356,7 @@ middle"
    (t (message "nil"))))
 
 (defun win-resize-enlarge-vert ()
+  "Bla bla bla."
   (interactive)
   (cond
    ((equal "left" (win-resize-left-or-right)) (enlarge-window-horizontally -1))
@@ -425,8 +427,7 @@ middle"
 
 ;; Instead screensaver
 (defun lock-screen ()
-  "Lock screen using (zone) and xtrlock
-calls M-x zone on all frames and runs xtrlock"
+  "Lock screen using (zone) and xtrlock calls M-x zone on all frames and runs xtrlock"
   (interactive)
   (save-excursion
 	(set-process-sentinel
