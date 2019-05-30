@@ -122,7 +122,8 @@
 
 ;; Add backends to company mode after load
 (eval-after-load 'company '(add-to-list 'company-backends '(company-irony-c-headers company-irony company-jedi)))
-(add-hook 'verilog-mode-hook (lambda () (add-to-list 'company-keywords-alist (cons 'verilog-mode verilog-keywords))))
+;; (add-hook 'verilog-mode-hook (add-to-list 'company-keywords-alist (cons 'verilog-mode verilog-keywords)))
+(add-hook 'verilog-mode-hook 'flycheck-mode)
 
 (setq verilog-indent-level-module 2)
 (setq verilog-indent-level-declaration 2)
@@ -138,10 +139,10 @@
 (setq verilog-auto-lineup 'declarations)
 (setq verilog-highlight-p1800-keywords nil)
 (setq verilog-tool 'verilog-linter)
-(setq verilog-linter "iverilog")
-(setq verilog-coverage "")
-(setq verilog-simulator "")
-(setq verilog-compiler "")
+(setq verilog-linter "verilator")
+(setq verilog-coverage "verilator_coverage")
+(setq verilog-simulator "iverilog")
+(setq verilog-compiler "iverilog" )
 (setq verilog-indent-level 2)
 
 ;; Enable syntax flycheck in C/C++ mode
@@ -154,6 +155,9 @@
 										; Enable clang-format
 (add-hook 'c++-mode-hook (lambda () (local-set-key (kbd "C-i") 'clang-format)))
 (add-hook 'c-mode-hook (lambda () (local-set-key (kbd "C-i") 'clang-format)))
+
+;; Enable flycheck in BASH
+(add-hook 'sh-mode-hook 'flycheck-mode)
 
 ;; Regular expressions
 (require 'visual-regexp)
@@ -173,6 +177,7 @@
 
 ;; Custom function hook for irony after load
 (defun my-irony-mode-hook ()
+	
   (define-key irony-mode-map [remap completion-at-point] 'irony-completion-at-point-async)
   (define-key irony-mode-map [remap complete-symbol] 'irony-completion-at-point-async))
 
@@ -321,19 +326,6 @@ down
 
 ;; EXWM global keyboard bindings
 (exwm-input-set-key (kbd "s-SPC") 'exwm-input-toggle-keyboard) ;; Toggle keyboard grabbing in current workspace
-;; (exwm-input-set-key (kbd "M-s-SPC") '(lambda()
-;; 									   (interactive)
-;; 									   (minibuffer-message
-;; 										(shell-command-to-string "setxkbmap -layout ru")
-;; 										(message "%s" "RU")
-;; 										))) ;; Globally set russian keyboard layout
-
-;; (exwm-input-set-key (kbd "C-s-SPC") '(lambda()
-;; 									   (interactive)
-;; 									   (minibuffer-message
-;; 										(shell-command-to-string "setxkbmap -layout us")
-;; 										(message "%s" "US")
-;; 										))) ;; Globally set usa keyboard layout
 
 ;; Quick launcher applications
 (exwm-input-set-key (kbd "s-<return>") '(lambda () (interactive) (exwmx-shell-command "terminator"))) ;; Open terminal
@@ -402,6 +394,7 @@ middle"
    (t (message "nil"))))
 
 (defun win-resize-enlarge-vert ()
+  "Bla bla bla."
   (interactive)
   (cond
    ((equal "left" (win-resize-left-or-right)) (enlarge-window-horizontally -1))
@@ -473,8 +466,7 @@ middle"
 
 ;; Instead screensaver
 (defun lock-screen ()
-  "Lock screen using (zone) and xtrlock
-calls M-x zone on all frames and runs xtrlock"
+  "Lock screen using (zone) and xtrlock calls M-x zone on all frames and runs xtrlock"
   (interactive)
   (save-excursion
 	(set-process-sentinel
@@ -483,13 +475,17 @@ calls M-x zone on all frames and runs xtrlock"
 		(zone-leave-me-alone)))
 
 	(shell-command-to-string "setxkbmap -layout us")
-	(zone-sl)))
+	(zone-when-idle 1)))
 
 ;; Screenlock key binding
 (exwm-input-set-key (kbd "<f12>") 'lock-screen)
 
+<<<<<<< HEAD
 (require 'clipmon)
 (require 'browse-kill-ring)
+=======
+(setq org-agenda-files (list "~/Workspace/SUPPLNX.org"))
+>>>>>>> 7211f4644ee6052bb28903e365683b4ae6ddd880
 
 ;; Make this file visible to emacs lisp interpreter
 (provide 'init)
