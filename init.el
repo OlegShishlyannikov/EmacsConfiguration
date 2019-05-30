@@ -103,6 +103,7 @@
 (require 'exwm-systemtray) ;; Emacs X Window Manager systemtray
 (require 'exwmx-core) ;; EXWM
 (require 'ggtags) ;; Tags for code navigation
+(require 'llvm-mode) ;; Major mode for editing llvm byte code
 
 ;; Pdf files opens in pdf-view mode
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
@@ -146,8 +147,13 @@
 ;; Enable syntax flycheck in C/C++ mode
 (add-hook 'c++-mode-hook 'flycheck-mode)
 (add-hook 'c-mode-hook 'flycheck-mode)
+
 (add-hook 'c++-mode-hook 'ggtags-mode)
-(add-hook 'c++-mode-hook 'ggtags-mode)
+(add-hook 'c-mode-hook 'ggtags-mode)
+
+										; Enable clang-format
+(add-hook 'c++-mode-hook (lambda () (local-set-key (kbd "C-i") 'clang-format)))
+(add-hook 'c-mode-hook (lambda () (local-set-key (kbd "C-i") 'clang-format)))
 
 ;; Regular expressions
 (require 'visual-regexp)
@@ -211,7 +217,7 @@
       (forward-line)
       (when (or (< arg 0) (not (eobp)))
         (transpose-lines arg))
-    (forward-line -1)))))
+      (forward-line -1)))))
 
 ;; Move selected test functions
 (defun move-text-down (arg)
@@ -227,7 +233,7 @@
 ;; Disable backuping
 (setq backup-inhibited t)
 
-; Disable auto save
+										; Disable auto save
 (setq auto-save-default nil)
 
 ;; Setup multiterm package
@@ -268,21 +274,66 @@
 (exwm-input-set-key (kbd "<XF86AudioLowerVolume>") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "amixer -q sset Master 5%-"))))
 (exwm-input-set-key (kbd "<XF86AudioMute>") '(lambda() (interactive) (minibuffer-message(shell-command-to-string "amixer -q sset Master toggle && amixer sget Master"))))
 
+;; Brightness
+(exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+					'(lambda() (interactive) (minibuffer-message
+											  (shell-command-to-string
+											   "
+MAX_BRIGHTNESS=250;
+MIN_BRIGHTNESS=10;
+STEP=5;
+
+function up
+{
+	BRIGHTNESS=$(cat /sys/class/backlight/amdgpu_bl0/brightness);
+
+	if [ $BRIGHTNESS -lt $MAX_BRIGHTNESS ];
+	then
+		NEW_BRIGHTNESS=$(($BRIGHTNESS + $STEP));		
+		echo $NEW_BRIGHTNESS | sudo tee /sys/class/backlight/amdgpu_bl0/brightness > /dev/null;
+	fi
+}
+
+up
+"))))
+
+(exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+					'(lambda() (interactive) (minibuffer-message
+											  (shell-command-to-string
+											   "
+MAX_BRIGHTNESS=250;
+MIN_BRIGHTNESS=10;
+STEP=5;
+
+function down
+{
+	BRIGHTNESS=$(cat /sys/class/backlight/amdgpu_bl0/brightness);
+
+	if [ $BRIGHTNESS -gt $MIN_BRIGHTNESS ];
+	then
+		NEW_BRIGHTNESS=$(($BRIGHTNESS - $STEP));		
+		echo $NEW_BRIGHTNESS | sudo tee /sys/class/backlight/amdgpu_bl0/brightness > /dev/null;
+	fi
+}
+
+down
+"))))
+
 ;; EXWM global keyboard bindings
 (exwm-input-set-key (kbd "s-SPC") 'exwm-input-toggle-keyboard) ;; Toggle keyboard grabbing in current workspace
-(exwm-input-set-key (kbd "M-s-SPC") '(lambda()
-									   (interactive)
-									   (minibuffer-message
-										(shell-command-to-string "setxkbmap -layout ru")
-										(message "%s" "RU")
-										))) ;; Globally set russian keyboard layout
+;; (exwm-input-set-key (kbd "M-s-SPC") '(lambda()
+;; 									   (interactive)
+;; 									   (minibuffer-message
+;; 										(shell-command-to-string "setxkbmap -layout ru")
+;; 										(message "%s" "RU")
+;; 										))) ;; Globally set russian keyboard layout
 
-(exwm-input-set-key (kbd "C-s-SPC") '(lambda()
-									   (interactive)
-									   (minibuffer-message
-										(shell-command-to-string "setxkbmap -layout us")
-										(message "%s" "US")
-										))) ;; Globally set usa keyboard layout
+;; (exwm-input-set-key (kbd "C-s-SPC") '(lambda()
+;; 									   (interactive)
+;; 									   (minibuffer-message
+;; 										(shell-command-to-string "setxkbmap -layout us")
+;; 										(message "%s" "US")
+;; 										))) ;; Globally set usa keyboard layout
 
 ;; Quick launcher applications
 (exwm-input-set-key (kbd "s-<return>") '(lambda () (interactive) (exwmx-shell-command "terminator"))) ;; Open terminal
@@ -380,7 +431,7 @@ middle"
 (display-time-mode t)
 
 ;; Show battery charge
-;; (display-battery-mode 1)
+(display-battery-mode 1)
 
 ;; Show column numbers
 (column-number-mode 1)
@@ -402,10 +453,11 @@ middle"
 (require 'exwm-randr)
 (setq exwm-randr-workspace-output-plist '( 0 "DP-2" 1 "DP-2" 2 "DP-1" 3 "DP-1" ))
 (add-hook 'exwm-randr-screen-change-hook
-        (lambda ()
-          (start-process-shell-command
-          "xrandr" nil "xrandr --output DP-2 --left-of DP-1 --auto")))
+          (lambda ()
+			(start-process-shell-command
+			 "xrandr" nil "xrandr --output DP-2 --left-of DP-1 --auto")))
 (exwm-randr-enable)
+(exwm-cm-enable)
 
 ;; Setup org mode
 (require 'org-install)
@@ -413,7 +465,7 @@ middle"
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
- 
+
 ;; Google translate tuning
 (require 'google-translate)
 (require 'google-translate-smooth-ui)
@@ -435,6 +487,9 @@ calls M-x zone on all frames and runs xtrlock"
 
 ;; Screenlock key binding
 (exwm-input-set-key (kbd "<f12>") 'lock-screen)
+
+(require 'clipmon)
+(require 'browse-kill-ring)
 
 ;; Make this file visible to emacs lisp interpreter
 (provide 'init)
