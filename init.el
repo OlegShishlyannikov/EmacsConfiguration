@@ -103,7 +103,6 @@
 (require 'exwm-systemtray) ;; Emacs X Window Manager systemtray
 (require 'exwmx-core) ;; EXWM
 (require 'ggtags) ;; Tags for code navigation
-(require 'llvm-mode) ;; Major mode for editing llvm byte code
 
 ;; Pdf files opens in pdf-view mode
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
@@ -470,7 +469,7 @@ middle"
   (interactive)
   (save-excursion
 	(set-process-sentinel
-     (start-process "xtrlock" nil "xtrlock")
+     (start-process "slock" nil "slock")
      '(lambda (process event)
 		(zone-leave-me-alone)))
 
@@ -480,12 +479,8 @@ middle"
 ;; Screenlock key binding
 (exwm-input-set-key (kbd "<f12>") 'lock-screen)
 
-<<<<<<< HEAD
 (require 'clipmon)
 (require 'browse-kill-ring)
-=======
-(setq org-agenda-files (list "~/Workspace/SUPPLNX.org"))
->>>>>>> 7211f4644ee6052bb28903e365683b4ae6ddd880
 
 ;; Make this file visible to emacs lisp interpreter
 (provide 'init)
