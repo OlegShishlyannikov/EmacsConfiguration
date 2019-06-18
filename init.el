@@ -237,7 +237,7 @@
 ;; Disable backuping
 (setq backup-inhibited t)
 
-										; Disable auto save
+; Disable auto save
 (setq auto-save-default nil)
 
 ;; Setup multiterm package
@@ -282,46 +282,12 @@
 (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
 					'(lambda() (interactive) (minibuffer-message
 											  (shell-command-to-string
-											   "
-MAX_BRIGHTNESS=250;
-MIN_BRIGHTNESS=10;
-STEP=5;
-
-function up
-{
-	BRIGHTNESS=$(cat /sys/class/backlight/amdgpu_bl0/brightness);
-
-	if [ $BRIGHTNESS -lt $MAX_BRIGHTNESS ];
-	then
-		NEW_BRIGHTNESS=$(($BRIGHTNESS + $STEP));		
-		echo $NEW_BRIGHTNESS | sudo tee /sys/class/backlight/amdgpu_bl0/brightness > /dev/null;
-	fi
-}
-
-up
-"))))
+											   "light -A 5 && light -O"))))
 
 (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
 					'(lambda() (interactive) (minibuffer-message
 											  (shell-command-to-string
-											   "
-MAX_BRIGHTNESS=250;
-MIN_BRIGHTNESS=10;
-STEP=5;
-
-function down
-{
-	BRIGHTNESS=$(cat /sys/class/backlight/amdgpu_bl0/brightness);
-
-	if [ $BRIGHTNESS -gt $MIN_BRIGHTNESS ];
-	then
-		NEW_BRIGHTNESS=$(($BRIGHTNESS - $STEP));		
-		echo $NEW_BRIGHTNESS | sudo tee /sys/class/backlight/amdgpu_bl0/brightness > /dev/null;
-	fi
-}
-
-down
-"))))
+											   "light -U 5 && light -O"))))
 
 ;; EXWM global keyboard bindings
 (exwm-input-set-key (kbd "s-SPC") 'exwm-input-toggle-keyboard) ;; Toggle keyboard grabbing in current workspace
@@ -443,11 +409,11 @@ middle"
 '(font-use-system-font t)
 
 (require 'exwm-randr)
-(setq exwm-randr-workspace-output-plist '( 0 "DP-2" 1 "DP-2" 2 "DP-1" 3 "DP-1" ))
+(setq exwm-randr-workspace-output-plist '( 0 "HDMI-A-0" 1 "HDMI-A-0" 2 "eDP" 3 "eDP" ))
 (add-hook 'exwm-randr-screen-change-hook
           (lambda ()
 			(start-process-shell-command
-			 "xrandr" nil "xrandr --output DP-2 --left-of DP-1 --auto")))
+			 "xrandr" nil "xrandr --output HDMI-A-0 --left-of eDP --auto")))
 (exwm-randr-enable)
 (exwm-cm-enable)
 
@@ -481,6 +447,9 @@ middle"
 
 (require 'clipmon)
 (require 'browse-kill-ring)
+
+(add-hook 'after-init-hook (lambda ()(interactive)(shell-command-to-string "setxkbmap -option grp:alt_space_toggle us,ru")))
+(add-hook 'after-init-hook  (lambda ()(interactive)(shell-command-to-string "light -I")))
 
 ;; Make this file visible to emacs lisp interpreter
 (provide 'init)
