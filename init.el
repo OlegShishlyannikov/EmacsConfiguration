@@ -7,6 +7,7 @@
 (require 'package)
 (package-initialize)
 (add-to-list 'package-archives '("melpa" . "https://melpa.milkbox.net/packages/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 (setq frame-title-format "Emacs!")
 
@@ -120,9 +121,13 @@
 (add-hook 'prog-mode-hook 'projectile-mode)
 
 ;; Add backends to company mode after load
-(eval-after-load 'company '(add-to-list 'company-backends '(company-irony-c-headers company-irony company-jedi)))
+(eval-after-load 'company '(add-to-list 'company-backends '(company-irony-c-headers company-irony company-jedi company-tern)))
 ;; (add-hook 'verilog-mode-hook (add-to-list 'company-keywords-alist (cons 'verilog-mode verilog-keywords)))
 (add-hook 'verilog-mode-hook 'flycheck-mode)
+(add-hook 'js2-mode-hook (lambda ()
+                           (tern-mode)
+                           (company-mode)))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 
 (setq verilog-indent-level-module 2)
 (setq verilog-indent-level-declaration 2)
@@ -431,16 +436,15 @@ middle"
 
 ;; Instead screensaver
 (defun lock-screen ()
-  "Lock screen using (zone) and xtrlock calls M-x zone on all frames and runs xtrlock"
+  "Lock screen using (zone) and xtrlock calls M-x zone-sl on all frames and runs xtrlock"
   (interactive)
   (save-excursion
 	(set-process-sentinel
-     (start-process "slock" nil "slock")
+     (start-process "pyxtrlock" nil "pyxtrlock")
      '(lambda (process event)
 		(zone-leave-me-alone)))
-
 	(shell-command-to-string "setxkbmap -layout us")
-	(zone-when-idle 1)))
+	(zone-sl)))
 
 ;; Screenlock key binding
 (exwm-input-set-key (kbd "<f12>") 'lock-screen)
